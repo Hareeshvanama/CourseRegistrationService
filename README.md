@@ -1,4 +1,6 @@
-# Course Registration
+# CourseRegistrationService
+
+course-registration feature with AI used as an engineering assistant. Demonstrate clear task decomposition, thoughtful review of AI output, and independent verification. This exercise is about a reliable service slice, not a complete registration platform.
 
 A small ASP.NET Core and EF Core service implementing enrollment, a FIFO waitlist, drops, prerequisite checks, and waitlist promotion for course offerings.
 
