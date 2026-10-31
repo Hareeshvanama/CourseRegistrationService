@@ -19,6 +19,17 @@ public class EnrollmentRepository : IEnrollmentRepository
         return _dbContext.Enrollments.CountAsync(e => e.CourseOfferingId == courseOfferingId, cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Enrollment>> GetByCourseOfferingAsync(int courseOfferingId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Enrollments
+            .AsNoTracking()
+            .Include(e => e.Learner)
+            .Where(e => e.CourseOfferingId == courseOfferingId)
+            .OrderBy(e => e.EnrolledAtUtc)
+            .ThenBy(e => e.Id)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Enrollment?> GetActiveEnrollmentAsync(int learnerId, int courseOfferingId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Enrollments

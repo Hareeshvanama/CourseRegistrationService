@@ -26,6 +26,21 @@ public class CourseRegistrationService : ICourseRegistrationService
         _unitOfWork = unitOfWork;
     }
 
+    public async Task<IReadOnlyList<RegisteredLearnerDto>> GetRegisteredLearnersAsync(int courseOfferingId, CancellationToken cancellationToken = default)
+    {
+        var enrollments = await _enrollmentRepository.GetByCourseOfferingAsync(courseOfferingId, cancellationToken);
+        return enrollments
+            .Select(enrollment => new RegisteredLearnerDto
+            {
+                EnrollmentId = enrollment.Id,
+                CourseOfferingId = enrollment.CourseOfferingId,
+                LearnerId = enrollment.LearnerId,
+                LearnerName = enrollment.Learner.Name,
+                EnrolledAtUtc = enrollment.EnrolledAtUtc
+            })
+            .ToArray();
+    }
+
     public async Task<CourseRegistrationResult> EnrollLearnerAsync(EnrollLearnerRequest request, CancellationToken cancellationToken = default)
     {
         return await _unitOfWork.ExecuteInTransactionAsync(async token =>

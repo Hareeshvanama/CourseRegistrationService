@@ -15,6 +15,13 @@ public class CourseRegistrationController : ControllerBase
         _service = service;
     }
 
+    [HttpGet("{courseOfferingId:int}/enrollments")]
+    public async Task<IActionResult> GetRegisteredLearners(int courseOfferingId, CancellationToken cancellationToken)
+    {
+        var learners = await _service.GetRegisteredLearnersAsync(courseOfferingId, cancellationToken);
+        return Ok(learners);
+    }
+
     [HttpPost("enroll")]
     public async Task<IActionResult> Enroll([FromBody] EnrollLearnerRequest request, CancellationToken cancellationToken)
     {

@@ -1,6 +1,29 @@
 @CourseRegistration.Api_HostAddress = http://localhost:5082
 
-GET {{CourseRegistration.Api_HostAddress}}/weatherforecast/
+GET {{CourseRegistration.Api_HostAddress}}/health
 Accept: application/json
 
 ###
+
+GET {{CourseRegistration.Api_HostAddress}}/api/CourseRegistration/1/enrollments
+Accept: application/json
+
+###
+
+POST {{CourseRegistration.Api_HostAddress}}/api/CourseRegistration/enroll
+Content-Type: application/json
+
+{
+  "courseOfferingId": 1,
+  "learnerId": 1
+}
+
+###
+
+POST {{CourseRegistration.Api_HostAddress}}/api/CourseRegistration/drop
+Content-Type: application/json
+
+{
+  "courseOfferingId": 1,
+  "learnerId": 1
+}

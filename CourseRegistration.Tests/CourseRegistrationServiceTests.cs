@@ -11,6 +11,36 @@ using Microsoft.EntityFrameworkCore;
 public class CourseRegistrationServiceTests
 {
     [Fact]
+    public async Task GetRegisteredLearners_ReturnsEnrolledLearnersInEnrollmentOrder()
+    {
+        await using var fixture = await DatabaseFixture.CreateAsync();
+        var firstEnrollment = EnrollmentFor(1);
+        firstEnrollment.EnrolledAtUtc = DateTime.UtcNow.AddMinutes(-2);
+        var secondEnrollment = EnrollmentFor(2);
+        secondEnrollment.EnrolledAtUtc = DateTime.UtcNow.AddMinutes(-1);
+        await fixture.SeedAsync(
+            [EligibleLearner(1), EligibleLearner(2), EligibleLearner(3)],
+            Offering(capacity: 2),
+            [secondEnrollment, firstEnrollment],
+            [WaitlistFor(3, DateTime.UtcNow)]);
+
+        var learners = await fixture.Service.GetRegisteredLearnersAsync(courseOfferingId: 1);
+
+        Assert.Collection(
+            learners,
+            learner =>
+            {
+                Assert.Equal(1, learner.LearnerId);
+                Assert.Equal("Learner 1", learner.LearnerName);
+            },
+            learner =>
+            {
+                Assert.Equal(2, learner.LearnerId);
+                Assert.Equal("Learner 2", learner.LearnerName);
+            });
+    }
+
+    [Fact]
     public async Task Enroll_WhenSeatAvailable_EnrollsLearner()
     {
         await using var fixture = await DatabaseFixture.CreateAsync();

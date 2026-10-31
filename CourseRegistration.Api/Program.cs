@@ -33,6 +33,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.MapGet("/health", async (CourseRegistrationDbContext dbContext, CancellationToken cancellationToken) =>
+{
+    var databaseConnected = await dbContext.Database.CanConnectAsync(cancellationToken);
+    return databaseConnected
+        ? Results.Ok(new { status = "Healthy", database = "Connected" })
+        : Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
+});
+
 app.UseHttpsRedirection();
 app.MapControllers();
 
